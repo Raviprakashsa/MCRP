@@ -29,7 +29,6 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
-import { env } from "@/lib/env";
 
 /** Google OAuth button. Only rendered when Google is enabled (checked server-side). */
 export function GoogleButton({

@@ -24,6 +24,19 @@ export async function GET(request: Request) {
     return `${origin}${path}`;
   }
 
+  // If the provider/Supabase returned an error (no code is issued in that case),
+  // surface the real reason instead of a generic "no_code".
+  const providerError =
+    searchParams.get("error_description") ?? searchParams.get("error");
+  if (providerError) {
+    console.error("[auth/callback] provider error:", providerError);
+    return NextResponse.redirect(
+      buildRedirect(
+        `/login?error=auth&reason=${encodeURIComponent(providerError)}`,
+      ),
+    );
+  }
+
   if (!code) {
     console.error("[auth/callback] No code parameter in URL");
     return NextResponse.redirect(
