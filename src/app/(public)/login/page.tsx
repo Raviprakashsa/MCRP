@@ -11,9 +11,9 @@ export const metadata: Metadata = { title: "Log in" };
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ redirectedFrom?: string; error?: string }>;
+  searchParams: Promise<{ redirectedFrom?: string; error?: string; reason?: string }>;
 }) {
-  const { redirectedFrom, error } = await searchParams;
+  const { redirectedFrom, error, reason } = await searchParams;
   const googleEnabled = await isGoogleAuthEnabled();
 
   return (
@@ -26,7 +26,7 @@ export default async function LoginPage({
           <FormAlert>
             {error === "profile_setup"
               ? "We couldn't load your profile. Please sign in again."
-              : "We couldn't sign you in. Please try again."}
+              : `We couldn't sign you in. ${reason ? `Reason: ${reason}` : "Please try again."}`}
           </FormAlert>
         </div>
       ) : null}

@@ -14,29 +14,47 @@ export async function GET(request: Request) {
   // Prevent open redirects: only allow same-site paths.
   const next = nextParam.startsWith("/") ? nextParam : "/dashboard";
 
-  if (code) {
-    const supabase = await createClient();
-    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+  const forwardedHost = request.headers.get("x-forwarded-host");
+  const isLocal = process.env.NODE_ENV === "development";
 
-    if (!error && data.user) {
-      // Best-effort super-admin bootstrap — never block login if it fails.
-      try {
-        await ensureSuperAdmin(data.user.id, data.user.email);
-      } catch (e) {
-        console.error("[auth/callback] ensureSuperAdmin failed:", e);
-      }
-
-      const forwardedHost = request.headers.get("x-forwarded-host");
-      const isLocal = process.env.NODE_ENV === "development";
-      if (isLocal) {
-        return NextResponse.redirect(`${origin}${next}`);
-      }
-      if (forwardedHost) {
-        return NextResponse.redirect(`https://${forwardedHost}${next}`);
-      }
-      return NextResponse.redirect(`${origin}${next}`);
-    }
+  /** Build the final redirect URL respecting proxies. */
+  function buildRedirect(path: string): string {
+    if (isLocal) return `${origin}${path}`;
+    if (forwardedHost) return `https://${forwardedHost}${path}`;
+    return `${origin}${path}`;
   }
 
-  return NextResponse.redirect(`${origin}/login?error=auth`);
+  if (!code) {
+    console.error("[auth/callback] No code parameter in URL");
+    return NextResponse.redirect(
+      buildRedirect("/login?error=auth&reason=no_code"),
+    );
+  }
+
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+
+  if (error) {
+    console.error("[auth/callback] exchangeCodeForSession failed:", error.message);
+    return NextResponse.redirect(
+      buildRedirect(`/login?error=auth&reason=${encodeURIComponent(error.message)}`),
+    );
+  }
+
+  if (!data.user) {
+    console.error("[auth/callback] No user returned after code exchange");
+    return NextResponse.redirect(
+      buildRedirect("/login?error=auth&reason=no_user"),
+    );
+  }
+
+  // Best-effort super-admin bootstrap — never block login if it fails.
+  try {
+    await ensureSuperAdmin(data.user.id, data.user.email);
+  } catch (e) {
+    console.error("[auth/callback] ensureSuperAdmin failed:", e);
+  }
+
+  return NextResponse.redirect(buildRedirect(next));
 }
+
