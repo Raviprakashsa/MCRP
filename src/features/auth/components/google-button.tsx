@@ -1,7 +1,6 @@
 "use client";
 
-import { signInWithGoogleAction } from "@/features/auth/actions";
-import { SubmitButton } from "./submit-button";
+
 
 function GoogleIcon() {
   return (
@@ -26,18 +25,51 @@ function GoogleIcon() {
   );
 }
 
+import { useState } from "react";
+import { createClient } from "@/lib/supabase/client";
+import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
+import { env } from "@/lib/env";
+
 /** Google OAuth button. Only rendered when Google is enabled (checked server-side). */
 export function GoogleButton({
   label = "Continue with Google",
 }: {
   label?: string;
 }) {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleGoogleLogin = async () => {
+    try {
+      setIsLoading(true);
+      const supabase = createClient();
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback?next=/dashboard`,
+        },
+      });
+      if (error) {
+        console.error("Google login error:", error.message);
+        window.location.href = `/login?error=auth&reason=${encodeURIComponent(error.message)}`;
+      }
+    } catch (e) {
+      console.error("Unexpected login error:", e);
+      setIsLoading(false);
+    }
+  };
+
   return (
-    <form action={signInWithGoogleAction}>
-      <SubmitButton variant="outline" size="lg" className="w-full">
-        <GoogleIcon />
-        {label}
-      </SubmitButton>
-    </form>
+    <Button
+      variant="outline"
+      size="lg"
+      className="w-full"
+      onClick={handleGoogleLogin}
+      disabled={isLoading}
+      aria-busy={isLoading}
+    >
+      {isLoading ? <Loader2 className="animate-spin" /> : <GoogleIcon />}
+      {label}
+    </Button>
   );
 }
