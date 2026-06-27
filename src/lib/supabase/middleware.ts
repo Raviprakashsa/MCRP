@@ -17,7 +17,7 @@ const AUTH_ROUTES = ["/login", "/register"];
 
 /**
  * Refreshes the Supabase auth session on every request and enforces route
- * protection (Phase 4 sitemap). Runs from Next.js Proxy so server-side session
+ * protection (Phase 4 sitemap). Runs from Next.js Middleware so server-side session
  * cookies stay fresh and protected pages cannot be reached while signed out.
  */
 export async function updateSession(request: NextRequest) {

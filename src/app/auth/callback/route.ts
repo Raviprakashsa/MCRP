@@ -19,7 +19,12 @@ export async function GET(request: Request) {
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error && data.user) {
-      await ensureSuperAdmin(data.user.id, data.user.email);
+      // Best-effort super-admin bootstrap — never block login if it fails.
+      try {
+        await ensureSuperAdmin(data.user.id, data.user.email);
+      } catch (e) {
+        console.error("[auth/callback] ensureSuperAdmin failed:", e);
+      }
 
       const forwardedHost = request.headers.get("x-forwarded-host");
       const isLocal = process.env.NODE_ENV === "development";
