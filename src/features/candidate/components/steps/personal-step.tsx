@@ -51,7 +51,7 @@ export function PersonalStep({
     async (values: PersonalInput, silent = false) => {
       const res = await savePersonal(values);
       if (res.ok) {
-        onSaved();
+        if (!silent) onSaved();
         return true;
       }
       if (!silent && res.fieldErrors) {

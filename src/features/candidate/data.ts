@@ -39,8 +39,18 @@ export const getCandidate = cache(async (): Promise<Candidate | null> => {
 
 /** Require an authenticated candidate; redirect to login otherwise. */
 export async function requireCandidate(): Promise<Candidate> {
+  const user = await getUser();
+  if (!user) redirect("/login");
+
   const candidate = await getCandidate();
-  if (!candidate) redirect("/login");
+  if (!candidate) {
+    // Authenticated, but no profile row exists (e.g. the database hasn't been
+    // migrated yet, or the new-user trigger failed). Signing out avoids an
+    // auth↔profile redirect loop and surfaces a clear error on the login page.
+    const supabase = await createClient();
+    await supabase.auth.signOut();
+    redirect("/login?error=profile_setup");
+  }
   return candidate;
 }
 

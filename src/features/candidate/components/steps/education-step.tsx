@@ -55,7 +55,7 @@ export function EducationStep({
     async (values: EducationInput, silent = false) => {
       const res = await saveEducation(values);
       if (res.ok) {
-        onSaved();
+        if (!silent) onSaved();
         return true;
       }
       if (!silent && res.fieldErrors) {

@@ -51,7 +51,7 @@ export function PreferencesStep({
     async (values: PreferencesInput, silent = false) => {
       const res = await savePreferences(values);
       if (res.ok) {
-        onSaved();
+        if (!silent) onSaved();
         return true;
       }
       if (!silent && res.fieldErrors) {

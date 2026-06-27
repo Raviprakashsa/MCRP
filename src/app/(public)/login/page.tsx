@@ -23,7 +23,11 @@ export default async function LoginPage({
     >
       {error ? (
         <div className="mb-4">
-          <FormAlert>We couldn&apos;t sign you in. Please try again.</FormAlert>
+          <FormAlert>
+            {error === "profile_setup"
+              ? "We couldn't load your profile. Please sign in again."
+              : "We couldn't sign you in. Please try again."}
+          </FormAlert>
         </div>
       ) : null}
       {googleEnabled ? (
