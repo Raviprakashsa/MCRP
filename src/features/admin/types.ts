@@ -29,7 +29,21 @@ export type CandidateFilters = {
   registration_status?: string;
   city?: string;
   state?: string;
+  college?: string;
+  branch?: string;
+  skill?: string;
+  passing_year?: string;
   page?: number;
+};
+
+export type AuditLogRow = {
+  id: number;
+  actor_id: string | null;
+  action: string;
+  entity: string;
+  entity_id: string | null;
+  changes: Record<string, unknown> | null;
+  created_at: string;
 };
 
 export type AdminStats = {

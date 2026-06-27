@@ -10,13 +10,30 @@ export const metadata: Metadata = { title: "Candidates" };
 
 type SearchParams = Record<string, string | undefined>;
 
+const FILTER_KEYS = [
+  "q",
+  "status",
+  "registration_status",
+  "city",
+  "state",
+  "college",
+  "branch",
+  "skill",
+  "passing_year",
+] as const;
+
 function buildQuery(sp: SearchParams, page: number): string {
   const params = new URLSearchParams();
-  for (const key of ["q", "status", "registration_status", "city", "state"]) {
-    if (sp[key]) params.set(key, sp[key]!);
-  }
+  for (const key of FILTER_KEYS) if (sp[key]) params.set(key, sp[key]!);
   params.set("page", String(page));
   return params.toString();
+}
+
+function exportHref(sp: SearchParams, format: "csv" | "xlsx"): string {
+  const params = new URLSearchParams();
+  for (const key of FILTER_KEYS) if (sp[key]) params.set(key, sp[key]!);
+  params.set("format", format);
+  return `/admin/candidates/export?${params.toString()}`;
 }
 
 export default async function CandidatesPage({
@@ -32,6 +49,10 @@ export default async function CandidatesPage({
     registration_status: sp.registration_status,
     city: sp.city,
     state: sp.state,
+    college: sp.college,
+    branch: sp.branch,
+    skill: sp.skill,
+    passing_year: sp.passing_year,
     page,
   });
 
@@ -39,7 +60,23 @@ export default async function CandidatesPage({
     <div className="space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-semibold tracking-tight">Candidates</h1>
-        <span className="text-muted-foreground text-sm">{total} total</span>
+        <div className="flex items-center gap-2">
+          <span className="text-muted-foreground mr-1 text-sm">
+            {total} total
+          </span>
+          <a
+            href={exportHref(sp, "csv")}
+            className={buttonVariants({ variant: "outline", size: "sm" })}
+          >
+            Export CSV
+          </a>
+          <a
+            href={exportHref(sp, "xlsx")}
+            className={buttonVariants({ variant: "outline", size: "sm" })}
+          >
+            Export Excel
+          </a>
+        </div>
       </div>
 
       <CandidateFilters />

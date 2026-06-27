@@ -15,15 +15,24 @@ export function CandidateFilters() {
   const [reg, setReg] = useState(sp.get("registration_status") ?? "");
   const [city, setCity] = useState(sp.get("city") ?? "");
   const [state, setState] = useState(sp.get("state") ?? "");
+  const [college, setCollege] = useState(sp.get("college") ?? "");
+  const [branch, setBranch] = useState(sp.get("branch") ?? "");
+  const [skill, setSkill] = useState(sp.get("skill") ?? "");
+  const [year, setYear] = useState(sp.get("passing_year") ?? "");
 
   const apply = (e: React.FormEvent) => {
     e.preventDefault();
     const params = new URLSearchParams();
-    if (q.trim()) params.set("q", q.trim());
+    const set = (k: string, v: string) => v.trim() && params.set(k, v.trim());
+    set("q", q);
     if (status) params.set("status", status);
     if (reg) params.set("registration_status", reg);
-    if (city.trim()) params.set("city", city.trim());
-    if (state.trim()) params.set("state", state.trim());
+    set("city", city);
+    set("state", state);
+    set("college", college);
+    set("branch", branch);
+    set("skill", skill);
+    set("passing_year", year);
     router.push(`/admin/candidates?${params.toString()}`);
   };
 
@@ -33,13 +42,17 @@ export function CandidateFilters() {
     setReg("");
     setCity("");
     setState("");
+    setCollege("");
+    setBranch("");
+    setSkill("");
+    setYear("");
     router.push("/admin/candidates");
   };
 
   return (
     <form
       onSubmit={apply}
-      className="border-border bg-card grid gap-3 rounded-xl border p-4 sm:grid-cols-2 lg:grid-cols-6"
+      className="border-border bg-card grid gap-3 rounded-xl border p-4 sm:grid-cols-2 lg:grid-cols-4"
     >
       <div className="relative sm:col-span-2">
         <Search className="text-muted-foreground absolute top-1/2 left-2.5 size-4 -translate-y-1/2" />
@@ -75,6 +88,31 @@ export function CandidateFilters() {
         <option value="profile_completed">Profile completed</option>
       </select>
       <Input
+        value={college}
+        onChange={(e) => setCollege(e.target.value)}
+        placeholder="College"
+        aria-label="College"
+      />
+      <Input
+        value={branch}
+        onChange={(e) => setBranch(e.target.value)}
+        placeholder="Branch"
+        aria-label="Branch"
+      />
+      <Input
+        value={skill}
+        onChange={(e) => setSkill(e.target.value)}
+        placeholder="Skill"
+        aria-label="Skill"
+      />
+      <Input
+        value={year}
+        onChange={(e) => setYear(e.target.value)}
+        placeholder="Passing year"
+        inputMode="numeric"
+        aria-label="Passing year"
+      />
+      <Input
         value={city}
         onChange={(e) => setCity(e.target.value)}
         placeholder="City"
@@ -86,7 +124,7 @@ export function CandidateFilters() {
         placeholder="State"
         aria-label="State"
       />
-      <div className="flex gap-2 sm:col-span-2 lg:col-span-6">
+      <div className="flex gap-2 sm:col-span-2 lg:col-span-4">
         <Button type="submit" size="sm">
           <Search /> Apply
         </Button>

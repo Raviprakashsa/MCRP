@@ -6,6 +6,7 @@ import {
   getCandidateDetail,
   getCandidateResumeUrl,
 } from "@/features/admin/data";
+import { CandidateActions } from "@/features/admin/components/candidate-actions";
 import { registrationStatusMeta } from "@/features/candidate/profile-status";
 import type {
   ExperienceType,
@@ -123,6 +124,8 @@ export default async function AdminCandidateDetailPage({
           </span>
         </div>
       </div>
+
+      <CandidateActions id={candidate.id} status={candidate.status} />
 
       <Section title="Personal">
         <dl className="grid grid-cols-2 gap-4 sm:grid-cols-3">
