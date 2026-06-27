@@ -83,7 +83,11 @@ export function ProfileWizard({
 
       <div className="border-border bg-card rounded-2xl border p-6 shadow-sm sm:p-8">
         {step === 0 && (
-          <PersonalStep candidate={bundle.candidate} nav={nav} onSaved={onSaved} />
+          <PersonalStep
+            candidate={bundle.candidate}
+            nav={nav}
+            onSaved={onSaved}
+          />
         )}
         {step === 1 && (
           <EducationStep

@@ -27,14 +27,10 @@ export async function GET(request: NextRequest) {
 
     if (!error) {
       // Verified successfully — redirect to the target page
-      return NextResponse.redirect(
-        new URL(redirectTo, request.url),
-      );
+      return NextResponse.redirect(new URL(redirectTo, request.url));
     }
   }
 
   // If verification failed, redirect to login with error
-  return NextResponse.redirect(
-    new URL("/login?error=auth", request.url),
-  );
+  return NextResponse.redirect(new URL("/login?error=auth", request.url));
 }

@@ -4,11 +4,7 @@ import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { ExternalLink, FileText, Loader2, Trash2, Upload } from "lucide-react";
 import { toast } from "sonner";
-import {
-  getResumeDownloadUrl,
-  removeResume,
-  uploadResume,
-} from "../actions";
+import { getResumeDownloadUrl, removeResume, uploadResume } from "../actions";
 import type { CandidateDocument } from "../types";
 import { Button } from "@/components/ui/button";
 
@@ -18,7 +14,11 @@ function formatBytes(n: number | null): string {
   return kb > 1024 ? `${(kb / 1024).toFixed(1)} MB` : `${Math.round(kb)} KB`;
 }
 
-export function ResumeUpload({ resume: initial }: { resume: CandidateDocument | null }) {
+export function ResumeUpload({
+  resume: initial,
+}: {
+  resume: CandidateDocument | null;
+}) {
   const router = useRouter();
   const [resume, setResume] = useState(initial);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -142,7 +142,9 @@ export function ResumeUpload({ resume: initial }: { resume: CandidateDocument | 
         <span className="text-sm font-medium">
           {resume ? "Replace resume" : "Click to upload your resume"}
         </span>
-        <span className="text-muted-foreground text-xs">PDF only · up to 5 MB</span>
+        <span className="text-muted-foreground text-xs">
+          PDF only · up to 5 MB
+        </span>
       </button>
     </div>
   );

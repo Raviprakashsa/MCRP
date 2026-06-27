@@ -99,7 +99,9 @@ export async function getProfileBundle(): Promise<ProfileBundle> {
         .returns<Preferences>(),
       supabase
         .from("candidate_documents")
-        .select("id, type, file_path, file_name, mime_type, size_bytes, uploaded_at")
+        .select(
+          "id, type, file_path, file_name, mime_type, size_bytes, uploaded_at",
+        )
         .eq("type", "resume")
         .maybeSingle()
         .returns<CandidateDocument>(),

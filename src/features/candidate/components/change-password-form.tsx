@@ -5,10 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import {
-  changePasswordSchema,
-  type ChangePasswordInput,
-} from "../schemas";
+import { changePasswordSchema, type ChangePasswordInput } from "../schemas";
 import { changePassword } from "../actions";
 import { Field } from "./field";
 import { Input } from "@/components/ui/input";
@@ -23,7 +20,11 @@ export function ChangePasswordForm() {
     formState: { errors },
   } = useForm<ChangePasswordInput>({
     resolver: zodResolver(changePasswordSchema),
-    defaultValues: { currentPassword: "", newPassword: "", confirmPassword: "" },
+    defaultValues: {
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    },
   });
   const [pending, start] = useTransition();
 
@@ -37,7 +38,8 @@ export function ChangePasswordForm() {
       }
       if (res.fieldErrors) {
         for (const [k, v] of Object.entries(res.fieldErrors)) {
-          if (v?.[0]) setError(k as keyof ChangePasswordInput, { message: v[0] });
+          if (v?.[0])
+            setError(k as keyof ChangePasswordInput, { message: v[0] });
         }
       }
       if (res.error) toast.error(res.error);

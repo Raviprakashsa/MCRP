@@ -11,7 +11,11 @@ export const metadata: Metadata = { title: "Log in" };
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ redirectedFrom?: string; error?: string; reason?: string }>;
+  searchParams: Promise<{
+    redirectedFrom?: string;
+    error?: string;
+    reason?: string;
+  }>;
 }) {
   const { redirectedFrom, error, reason } = await searchParams;
   const googleEnabled = await isGoogleAuthEnabled();

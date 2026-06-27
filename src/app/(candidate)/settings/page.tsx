@@ -24,7 +24,10 @@ export default async function SettingsPage() {
             <dd className="mt-0.5 flex items-center gap-1.5">
               {candidate.email}
               {candidate.email_verified ? (
-                <BadgeCheck className="text-success size-4" aria-label="Verified" />
+                <BadgeCheck
+                  className="text-success size-4"
+                  aria-label="Verified"
+                />
               ) : null}
             </dd>
           </div>

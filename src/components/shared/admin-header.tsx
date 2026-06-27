@@ -2,11 +2,11 @@ import Link from "next/link";
 import { Logo } from "@/components/shared/logo";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { Container } from "@/components/shared/container";
-import { NavLinks } from "@/components/shared/nav-links";
 import { AccountMenu } from "@/components/shared/account-menu";
+import { AdminNav } from "@/features/admin/components/admin-nav";
 
-/** Authenticated app header (candidate area). */
-export function AppHeader({
+/** Authenticated admin-area header. */
+export function AdminHeader({
   name,
   email,
   code,
@@ -19,15 +19,18 @@ export function AppHeader({
     <header className="border-border bg-background/95 supports-[backdrop-filter]:bg-background/80 sticky top-0 z-40 border-b backdrop-blur">
       <Container>
         <div className="flex h-16 items-center justify-between gap-4">
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-3">
             <Link
-              href="/dashboard"
-              aria-label="Magnus Copo"
+              href="/admin"
+              aria-label="Magnus Copo admin"
               className="shrink-0"
             >
-              <Logo width={132} />
+              <Logo width={120} />
             </Link>
-            <NavLinks />
+            <span className="bg-primary/10 text-primary hidden rounded-full px-2 py-0.5 text-xs font-medium sm:inline">
+              Admin
+            </span>
+            <AdminNav />
           </div>
           <div className="flex items-center gap-2">
             <ThemeToggle />

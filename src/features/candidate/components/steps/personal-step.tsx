@@ -70,7 +70,9 @@ export function PersonalStep({
     const parsed = personalSchema.safeParse(getValues());
     if (!parsed.success) return;
     setSave("saving");
-    void persist(parsed.data, true).then((ok) => setSave(ok ? "saved" : "idle"));
+    void persist(parsed.data, true).then((ok) =>
+      setSave(ok ? "saved" : "idle"),
+    );
   }, [getValues, persist]);
   useAutosave(JSON.stringify(values), autosave);
 
@@ -115,7 +117,11 @@ export function PersonalStep({
             {...register("mobile")}
           />
         </Field>
-        <Field label="WhatsApp" htmlFor="whatsapp" error={errors.whatsapp?.message}>
+        <Field
+          label="WhatsApp"
+          htmlFor="whatsapp"
+          error={errors.whatsapp?.message}
+        >
           <Input id="whatsapp" inputMode="numeric" {...register("whatsapp")} />
         </Field>
         <Field
@@ -134,7 +140,12 @@ export function PersonalStep({
             <option value="prefer_not_to_say">Prefer not to say</option>
           </select>
         </Field>
-        <Field label="City" htmlFor="city" required error={errors.city?.message}>
+        <Field
+          label="City"
+          htmlFor="city"
+          required
+          error={errors.city?.message}
+        >
           <Input id="city" aria-invalid={!!errors.city} {...register("city")} />
         </Field>
         <Field
@@ -143,7 +154,11 @@ export function PersonalStep({
           required
           error={errors.state?.message}
         >
-          <Input id="state" aria-invalid={!!errors.state} {...register("state")} />
+          <Input
+            id="state"
+            aria-invalid={!!errors.state}
+            {...register("state")}
+          />
         </Field>
         <Field label="PIN code" htmlFor="pin" error={errors.pin_code?.message}>
           <Input id="pin" inputMode="numeric" {...register("pin_code")} />

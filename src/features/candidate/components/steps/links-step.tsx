@@ -77,7 +77,8 @@ export function LinksStep({
     <div>
       <h2 className="text-lg font-semibold">Professional profiles</h2>
       <p className="text-muted-foreground mt-1 text-sm">
-        Link your GitHub, LinkedIn, and coding profiles. Each is saved instantly.
+        Link your GitHub, LinkedIn, and coding profiles. Each is saved
+        instantly.
       </p>
 
       <div className="mt-5 space-y-2">
@@ -106,7 +107,11 @@ export function LinksStep({
 
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
         <Field label="Platform" htmlFor="platform">
-          <select id="platform" className={selectClass} {...form.register("platform")}>
+          <select
+            id="platform"
+            className={selectClass}
+            {...form.register("platform")}
+          >
             {Object.entries(PLATFORM_LABELS).map(([v, l]) => (
               <option key={v} value={v}>
                 {l}
@@ -115,8 +120,16 @@ export function LinksStep({
           </select>
         </Field>
         {platform === "other" ? (
-          <Field label="Label" htmlFor="label" error={form.formState.errors.label?.message}>
-            <Input id="label" placeholder="e.g. Behance" {...form.register("label")} />
+          <Field
+            label="Label"
+            htmlFor="label"
+            error={form.formState.errors.label?.message}
+          >
+            <Input
+              id="label"
+              placeholder="e.g. Behance"
+              {...form.register("label")}
+            />
           </Field>
         ) : (
           <div className="hidden sm:block" />

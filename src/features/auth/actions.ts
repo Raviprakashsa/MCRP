@@ -53,39 +53,57 @@ export async function registerAction(
     ? normaliseMobile(parsed.data.whatsapp)
     : null;
 
-  // Friendly duplicate detection (admin client bypasses RLS for this check).
-  const admin = createAdminClient();
-  const [{ data: emailHit }, { data: mobileHit }] = await Promise.all([
-    admin.from("candidates").select("id").eq("email", email).maybeSingle(),
-    admin.from("candidates").select("id").eq("mobile", mobile).maybeSingle(),
-  ]);
-  if (emailHit) {
-    return {
-      fieldErrors: {
-        email: ["An account with this email already exists. Try logging in."],
-      },
-    };
-  }
-  if (mobileHit) {
-    return {
-      fieldErrors: {
-        mobile: ["An account with this mobile already exists. Try logging in."],
-      },
-    };
-  }
+  try {
+    // Friendly duplicate detection (admin client bypasses RLS for this check).
+    const admin = createAdminClient();
+    const [{ data: emailHit }, { data: mobileHit }] = await Promise.all([
+      admin.from("candidates").select("id").eq("email", email).maybeSingle(),
+      admin.from("candidates").select("id").eq("mobile", mobile).maybeSingle(),
+    ]);
+    if (emailHit) {
+      return {
+        fieldErrors: {
+          email: ["An account with this email already exists. Try logging in."],
+        },
+      };
+    }
+    if (mobileHit) {
+      return {
+        fieldErrors: {
+          mobile: [
+            "An account with this mobile already exists. Try logging in.",
+          ],
+        },
+      };
+    }
 
-  const supabase = await createClient();
-  const { error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      data: { full_name, mobile, whatsapp },
-      emailRedirectTo: `${env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
-    },
-  });
+    const supabase = await createClient();
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { full_name, mobile, whatsapp },
+        emailRedirectTo: `${env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
+      },
+    });
 
-  if (error) {
-    return { error: error.message };
+    if (error) {
+      const msg = error.message?.trim();
+      // The most common failure right after enabling SMTP is the confirmation
+      // email failing to send.
+      if (!msg || /send|smtp|email|mail/i.test(msg)) {
+        return {
+          error:
+            "We couldn't send your verification email. Check your Supabase email/SMTP settings (sender verified, SMTP key correct) and try again.",
+        };
+      }
+      return { error: msg };
+    }
+  } catch (e) {
+    console.error("[register] failed:", e);
+    return {
+      error: "Something went wrong creating your account. Please try again.",
+    };
   }
 
   redirect(`/verify-email?email=${encodeURIComponent(email)}`);

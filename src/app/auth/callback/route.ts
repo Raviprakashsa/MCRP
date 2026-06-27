@@ -48,9 +48,14 @@ export async function GET(request: Request) {
   const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 
   if (error) {
-    console.error("[auth/callback] exchangeCodeForSession failed:", error.message);
+    console.error(
+      "[auth/callback] exchangeCodeForSession failed:",
+      error.message,
+    );
     return NextResponse.redirect(
-      buildRedirect(`/login?error=auth&reason=${encodeURIComponent(error.message)}`),
+      buildRedirect(
+        `/login?error=auth&reason=${encodeURIComponent(error.message)}`,
+      ),
     );
   }
 
@@ -70,4 +75,3 @@ export async function GET(request: Request) {
 
   return NextResponse.redirect(buildRedirect(next));
 }
-

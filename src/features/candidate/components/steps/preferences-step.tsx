@@ -56,7 +56,8 @@ export function PreferencesStep({
       }
       if (!silent && res.fieldErrors) {
         for (const [k, v] of Object.entries(res.fieldErrors)) {
-          if (v?.[0]) setError(k as keyof PreferencesFormValues, { message: v[0] });
+          if (v?.[0])
+            setError(k as keyof PreferencesFormValues, { message: v[0] });
         }
       }
       if (!silent && res.error) toast.error(res.error);
@@ -70,7 +71,9 @@ export function PreferencesStep({
     const parsed = preferencesSchema.safeParse(getValues());
     if (!parsed.success) return;
     setSave("saving");
-    void persist(parsed.data, true).then((ok) => setSave(ok ? "saved" : "idle"));
+    void persist(parsed.data, true).then((ok) =>
+      setSave(ok ? "saved" : "idle"),
+    );
   }, [getValues, persist]);
   useAutosave(JSON.stringify(values), autosave);
 

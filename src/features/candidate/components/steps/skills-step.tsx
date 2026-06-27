@@ -142,7 +142,12 @@ export function SkillsStep({
           </select>
         </Field>
         <div className="flex items-end">
-          <Button type="button" variant="secondary" onClick={add} disabled={pending}>
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={add}
+            disabled={pending}
+          >
             <Plus /> Add
           </Button>
         </div>

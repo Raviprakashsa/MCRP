@@ -33,10 +33,30 @@ const toneClass = {
 } as const;
 
 const quickLinks = [
-  { href: "/profile", icon: UserRound, label: "My profile", desc: "View your details" },
-  { href: "/profile/edit", icon: FilePen, label: "Edit profile", desc: "Update any section" },
-  { href: "/resume", icon: FileText, label: "Resume", desc: "Upload or replace" },
-  { href: "/settings", icon: Settings, label: "Settings", desc: "Password & account" },
+  {
+    href: "/profile",
+    icon: UserRound,
+    label: "My profile",
+    desc: "View your details",
+  },
+  {
+    href: "/profile/edit",
+    icon: FilePen,
+    label: "Edit profile",
+    desc: "Update any section",
+  },
+  {
+    href: "/resume",
+    icon: FileText,
+    label: "Resume",
+    desc: "Upload or replace",
+  },
+  {
+    href: "/settings",
+    icon: Settings,
+    label: "Settings",
+    desc: "Password & account",
+  },
 ];
 
 export default async function DashboardPage() {

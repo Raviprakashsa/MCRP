@@ -60,7 +60,8 @@ export function EducationStep({
       }
       if (!silent && res.fieldErrors) {
         for (const [k, v] of Object.entries(res.fieldErrors)) {
-          if (v?.[0]) setError(k as keyof EducationFormValues, { message: v[0] });
+          if (v?.[0])
+            setError(k as keyof EducationFormValues, { message: v[0] });
         }
       }
       if (!silent && res.error) toast.error(res.error);
@@ -74,7 +75,9 @@ export function EducationStep({
     const parsed = educationSchema.safeParse(getValues());
     if (!parsed.success) return;
     setSave("saving");
-    void persist(parsed.data, true).then((ok) => setSave(ok ? "saved" : "idle"));
+    void persist(parsed.data, true).then((ok) =>
+      setSave(ok ? "saved" : "idle"),
+    );
   }, [getValues, persist]);
   useAutosave(JSON.stringify(values), autosave);
 
@@ -105,7 +108,11 @@ export function EducationStep({
             {...register("college_name")}
           />
         </Field>
-        <Field label="University" htmlFor="university" error={errors.university?.message}>
+        <Field
+          label="University"
+          htmlFor="university"
+          error={errors.university?.message}
+        >
           <Input id="university" {...register("university")} />
         </Field>
         <Field
@@ -122,7 +129,11 @@ export function EducationStep({
           />
         </Field>
         <Field label="Branch" htmlFor="branch" error={errors.branch?.message}>
-          <Input id="branch" placeholder="CSE / ISE / ECE…" {...register("branch")} />
+          <Input
+            id="branch"
+            placeholder="CSE / ISE / ECE…"
+            {...register("branch")}
+          />
         </Field>
         <Field
           label="Specialization"
@@ -158,14 +169,26 @@ export function EducationStep({
             {...register("passing_year")}
           />
         </Field>
-        <Field label="Score type" htmlFor="score_type" error={errors.score_type?.message}>
-          <select id="score_type" className={selectClass} {...register("score_type")}>
+        <Field
+          label="Score type"
+          htmlFor="score_type"
+          error={errors.score_type?.message}
+        >
+          <select
+            id="score_type"
+            className={selectClass}
+            {...register("score_type")}
+          >
             <option value="">Select…</option>
             <option value="cgpa">CGPA</option>
             <option value="percentage">Percentage</option>
           </select>
         </Field>
-        <Field label="Score" htmlFor="score_value" error={errors.score_value?.message}>
+        <Field
+          label="Score"
+          htmlFor="score_value"
+          error={errors.score_value?.message}
+        >
           <Input
             id="score_value"
             type="number"
@@ -174,8 +197,17 @@ export function EducationStep({
             {...register("score_value")}
           />
         </Field>
-        <Field label="Backlogs" htmlFor="backlogs" error={errors.backlogs?.message}>
-          <Input id="backlogs" type="number" min={0} {...register("backlogs")} />
+        <Field
+          label="Backlogs"
+          htmlFor="backlogs"
+          error={errors.backlogs?.message}
+        >
+          <Input
+            id="backlogs"
+            type="number"
+            min={0}
+            {...register("backlogs")}
+          />
         </Field>
       </div>
       <WizardFooter

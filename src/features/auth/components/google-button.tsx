@@ -1,7 +1,5 @@
 "use client";
 
-
-
 function GoogleIcon() {
   return (
     <svg viewBox="0 0 24 24" className="size-4" aria-hidden="true">

@@ -14,9 +14,19 @@ export const registrationStatusMeta: Record<
 export type MissingSection = { label: string; href: string };
 
 /** What the candidate still needs to do, in priority order. */
-export function computeMissingSections(bundle: ProfileBundle): MissingSection[] {
-  const { candidate, education, skills, projects, experiences, links, preferences, resume } =
-    bundle;
+export function computeMissingSections(
+  bundle: ProfileBundle,
+): MissingSection[] {
+  const {
+    candidate,
+    education,
+    skills,
+    projects,
+    experiences,
+    links,
+    preferences,
+    resume,
+  } = bundle;
   const missing: MissingSection[] = [];
 
   const personalDone =
@@ -28,7 +38,10 @@ export function computeMissingSections(bundle: ProfileBundle): MissingSection[] 
     candidate.gender;
 
   if (!personalDone) {
-    missing.push({ label: "Complete your personal details", href: "/profile/edit" });
+    missing.push({
+      label: "Complete your personal details",
+      href: "/profile/edit",
+    });
   }
   if (education.length === 0) {
     missing.push({ label: "Add your education", href: "/profile/edit" });
@@ -46,10 +59,16 @@ export function computeMissingSections(bundle: ProfileBundle): MissingSection[] 
     });
   }
   if (links.length === 0) {
-    missing.push({ label: "Add your professional links", href: "/profile/edit" });
+    missing.push({
+      label: "Add your professional links",
+      href: "/profile/edit",
+    });
   }
   if (!preferences?.preferred_role) {
-    missing.push({ label: "Set your career preferences", href: "/profile/edit" });
+    missing.push({
+      label: "Set your career preferences",
+      href: "/profile/edit",
+    });
   }
 
   return missing;

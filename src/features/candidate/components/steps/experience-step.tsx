@@ -43,12 +43,19 @@ export function ExperienceStep({
   onSaved: () => void;
 }) {
   const [projects, setProjects] = useState<Project[]>(initialProjects);
-  const [experiences, setExperiences] = useState<Experience[]>(initialExperiences);
+  const [experiences, setExperiences] =
+    useState<Experience[]>(initialExperiences);
   const [pending, start] = useTransition();
 
   const projectForm = useForm<ProjectInput>({
     resolver: zodResolver(projectSchema),
-    defaultValues: { title: "", description: "", tech_stack: "", project_url: "", repo_url: "" },
+    defaultValues: {
+      title: "",
+      description: "",
+      tech_stack: "",
+      project_url: "",
+      repo_url: "",
+    },
   });
 
   const experienceForm = useForm<ExperienceInput>({
@@ -165,12 +172,24 @@ export function ExperienceStep({
             error={projectForm.formState.errors.tech_stack?.message}
             className="sm:col-span-2"
           >
-            <Input id="p_tech" placeholder="React, Node.js" {...projectForm.register("tech_stack")} />
+            <Input
+              id="p_tech"
+              placeholder="React, Node.js"
+              {...projectForm.register("tech_stack")}
+            />
           </Field>
-          <Field label="Live URL" htmlFor="p_url" error={projectForm.formState.errors.project_url?.message}>
+          <Field
+            label="Live URL"
+            htmlFor="p_url"
+            error={projectForm.formState.errors.project_url?.message}
+          >
             <Input id="p_url" {...projectForm.register("project_url")} />
           </Field>
-          <Field label="Repo URL" htmlFor="p_repo" error={projectForm.formState.errors.repo_url?.message}>
+          <Field
+            label="Repo URL"
+            htmlFor="p_repo"
+            error={projectForm.formState.errors.repo_url?.message}
+          >
             <Input id="p_repo" {...projectForm.register("repo_url")} />
           </Field>
           <Field
@@ -179,7 +198,11 @@ export function ExperienceStep({
             error={projectForm.formState.errors.description?.message}
             className="sm:col-span-2"
           >
-            <Textarea id="p_desc" rows={2} {...projectForm.register("description")} />
+            <Textarea
+              id="p_desc"
+              rows={2}
+              {...projectForm.register("description")}
+            />
           </Field>
         </div>
         <Button
@@ -225,7 +248,11 @@ export function ExperienceStep({
         </div>
         <div className="mt-3 grid gap-3 sm:grid-cols-2">
           <Field label="Type" htmlFor="x_type">
-            <select id="x_type" className={selectClass} {...experienceForm.register("type")}>
+            <select
+              id="x_type"
+              className={selectClass}
+              {...experienceForm.register("type")}
+            >
               {Object.entries(EXPERIENCE_TYPES).map(([v, l]) => (
                 <option key={v} value={v}>
                   {l}
@@ -247,10 +274,18 @@ export function ExperienceStep({
             <Input id="x_loc" {...experienceForm.register("location")} />
           </Field>
           <Field label="Start date" htmlFor="x_start">
-            <Input id="x_start" type="date" {...experienceForm.register("start_date")} />
+            <Input
+              id="x_start"
+              type="date"
+              {...experienceForm.register("start_date")}
+            />
           </Field>
           <Field label="End date" htmlFor="x_end">
-            <Input id="x_end" type="date" {...experienceForm.register("end_date")} />
+            <Input
+              id="x_end"
+              type="date"
+              {...experienceForm.register("end_date")}
+            />
           </Field>
           <label className="text-foreground flex items-center gap-2 text-sm sm:col-span-2">
             <input

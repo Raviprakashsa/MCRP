@@ -1,24 +1,29 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { FilePen } from "lucide-react";
-import { getProfileBundle } from "@/features/candidate/data";
+import { notFound } from "next/navigation";
+import { ArrowLeft, ExternalLink } from "lucide-react";
+import {
+  getCandidateDetail,
+  getCandidateResumeUrl,
+} from "@/features/admin/data";
+import { registrationStatusMeta } from "@/features/candidate/profile-status";
 import type {
   ExperienceType,
   Gender,
   LinkPlatform,
 } from "@/features/candidate/types";
 import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
-export const metadata: Metadata = { title: "My profile" };
+export const metadata: Metadata = { title: "Candidate" };
 
-const GENDER_LABELS: Record<Gender, string> = {
+const GENDER: Record<Gender, string> = {
   male: "Male",
   female: "Female",
   other: "Other",
   prefer_not_to_say: "Prefer not to say",
 };
-
-const PLATFORM_LABELS: Record<LinkPlatform, string> = {
+const PLATFORM: Record<LinkPlatform, string> = {
   github: "GitHub",
   linkedin: "LinkedIn",
   portfolio: "Portfolio",
@@ -28,8 +33,7 @@ const PLATFORM_LABELS: Record<LinkPlatform, string> = {
   kaggle: "Kaggle",
   other: "Other",
 };
-
-const EXPERIENCE_TYPES: Record<ExperienceType, string> = {
+const EXP: Record<ExperienceType, string> = {
   internship: "Internship",
   work: "Work",
   freelance: "Freelance",
@@ -60,7 +64,15 @@ function Detail({ label, value }: { label: string; value?: string | null }) {
   );
 }
 
-export default async function ProfilePage() {
+export default async function AdminCandidateDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const bundle = await getCandidateDetail(id);
+  if (!bundle) notFound();
+
   const {
     candidate,
     education,
@@ -70,39 +82,64 @@ export default async function ProfilePage() {
     links,
     preferences,
     resume,
-  } = await getProfileBundle();
+  } = bundle;
+  const resumeUrl = resume ? await getCandidateResumeUrl(id) : null;
   const primary = education[0] ?? null;
+  const reg = registrationStatusMeta[candidate.registration_status];
 
   return (
     <div className="mx-auto max-w-3xl space-y-5">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <Link
+        href="/admin/candidates"
+        className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 text-sm"
+      >
+        <ArrowLeft className="size-4" /> Back to candidates
+      </Link>
+
+      <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">
-            {candidate.full_name || "My profile"}
+            {candidate.full_name || "Candidate"}
           </h1>
           <p className="text-muted-foreground mt-1 text-sm">
             <span className="font-mono">{candidate.candidate_code}</span> ·{" "}
             {candidate.email}
+            {candidate.mobile ? ` · ${candidate.mobile}` : ""}
           </p>
         </div>
-        <Link href="/profile/edit" className={buttonVariants({ size: "sm" })}>
-          <FilePen /> Edit profile
-        </Link>
+        <div className="flex items-center gap-2">
+          <span className="text-muted-foreground text-sm">
+            {candidate.profile_completion}% complete
+          </span>
+          <span
+            className={cn(
+              "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
+              candidate.status === "disabled"
+                ? "bg-muted text-muted-foreground"
+                : "bg-accent text-accent-foreground",
+            )}
+          >
+            {candidate.status === "disabled" ? "Disabled" : reg.label}
+          </span>
+        </div>
       </div>
 
       <Section title="Personal">
         <dl className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-          <Detail label="Mobile" value={candidate.mobile} />
           <Detail label="WhatsApp" value={candidate.whatsapp} />
           <Detail label="Date of birth" value={candidate.date_of_birth} />
           <Detail
             label="Gender"
-            value={candidate.gender ? GENDER_LABELS[candidate.gender] : null}
+            value={candidate.gender ? GENDER[candidate.gender] : null}
           />
           <Detail label="City" value={candidate.city} />
           <Detail label="State" value={candidate.state} />
           <Detail label="PIN code" value={candidate.pin_code} />
           <Detail label="Address" value={candidate.address} />
+          <Detail
+            label="Email verified"
+            value={candidate.email_verified ? "Yes" : "No"}
+          />
         </dl>
       </Section>
 
@@ -129,7 +166,7 @@ export default async function ProfilePage() {
             <Detail label="Backlogs" value={primary.backlogs.toString()} />
           </dl>
         ) : (
-          <p className="text-muted-foreground text-sm">Not added yet.</p>
+          <p className="text-muted-foreground text-sm">Not provided.</p>
         )}
       </Section>
 
@@ -152,13 +189,13 @@ export default async function ProfilePage() {
             ))}
           </div>
         ) : (
-          <p className="text-muted-foreground text-sm">Not added yet.</p>
+          <p className="text-muted-foreground text-sm">Not provided.</p>
         )}
       </Section>
 
       <Section title="Experience & projects">
         {experiences.length === 0 && projects.length === 0 ? (
-          <p className="text-muted-foreground text-sm">Not added yet.</p>
+          <p className="text-muted-foreground text-sm">Not provided.</p>
         ) : (
           <div className="space-y-4">
             {experiences.map((x) => (
@@ -168,10 +205,13 @@ export default async function ProfilePage() {
                   {x.organization}
                 </p>
                 <p className="text-muted-foreground text-xs">
-                  {EXPERIENCE_TYPES[x.type]}
+                  {EXP[x.type]}
                   {x.location ? ` · ${x.location}` : ""}
                   {x.is_current ? " · Current" : ""}
                 </p>
+                {x.description ? (
+                  <p className="mt-1 text-sm">{x.description}</p>
+                ) : null}
               </div>
             ))}
             {projects.map((p) => (
@@ -181,6 +221,9 @@ export default async function ProfilePage() {
                   <p className="text-muted-foreground text-xs">
                     {p.tech_stack.join(", ")}
                   </p>
+                ) : null}
+                {p.description ? (
+                  <p className="mt-1 text-sm">{p.description}</p>
                 ) : null}
               </div>
             ))}
@@ -194,7 +237,7 @@ export default async function ProfilePage() {
             {links.map((l) => (
               <li key={l.id} className="text-sm">
                 <span className="font-medium">
-                  {l.label || PLATFORM_LABELS[l.platform]}:
+                  {l.label || PLATFORM[l.platform]}:
                 </span>{" "}
                 <a
                   href={l.url}
@@ -208,7 +251,7 @@ export default async function ProfilePage() {
             ))}
           </ul>
         ) : (
-          <p className="text-muted-foreground text-sm">Not added yet.</p>
+          <p className="text-muted-foreground text-sm">Not provided.</p>
         )}
       </Section>
 
@@ -246,23 +289,28 @@ export default async function ProfilePage() {
             />
           </dl>
         ) : (
-          <p className="text-muted-foreground text-sm">Not added yet.</p>
+          <p className="text-muted-foreground text-sm">Not provided.</p>
         )}
       </Section>
 
       <Section title="Resume">
-        <p className="text-sm">
-          {resume ? (
-            <span className="text-success">
-              {resume.file_name ?? "resume.pdf"} uploaded.
-            </span>
-          ) : (
-            <span className="text-muted-foreground">No resume uploaded. </span>
-          )}{" "}
-          <Link href="/resume" className="text-primary hover:underline">
-            Manage resume
-          </Link>
-        </p>
+        {resume ? (
+          <div className="flex items-center justify-between gap-3">
+            <span className="text-sm">{resume.file_name ?? "resume.pdf"}</span>
+            {resumeUrl ? (
+              <a
+                href={resumeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={buttonVariants({ variant: "outline", size: "sm" })}
+              >
+                <ExternalLink /> View
+              </a>
+            ) : null}
+          </div>
+        ) : (
+          <p className="text-muted-foreground text-sm">No resume uploaded.</p>
+        )}
       </Section>
     </div>
   );
