@@ -34,7 +34,7 @@ export function AdminHeader({
           </div>
           <div className="flex items-center gap-2">
             <ThemeToggle />
-            <AccountMenu name={name} email={email} code={code} />
+            <AccountMenu name={name} email={email} code={code} isAdmin />
           </div>
         </div>
       </Container>

@@ -10,10 +10,12 @@ export function AppHeader({
   name,
   email,
   code,
+  isAdmin = false,
 }: {
   name: string;
   email: string;
   code: string;
+  isAdmin?: boolean;
 }) {
   return (
     <header className="border-border bg-background/95 supports-[backdrop-filter]:bg-background/80 sticky top-0 z-40 border-b backdrop-blur">
@@ -31,7 +33,12 @@ export function AppHeader({
           </div>
           <div className="flex items-center gap-2">
             <ThemeToggle />
-            <AccountMenu name={name} email={email} code={code} />
+            <AccountMenu
+              name={name}
+              email={email}
+              code={code}
+              isAdmin={isAdmin}
+            />
           </div>
         </div>
       </Container>
