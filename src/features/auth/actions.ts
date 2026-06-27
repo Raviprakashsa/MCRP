@@ -241,7 +241,6 @@ export async function signInWithGoogleAction(): Promise<void> {
     provider: "google",
     options: {
       redirectTo: `${env.NEXT_PUBLIC_SITE_URL}/auth/callback?next=/dashboard`,
-      flowType: "pkce",
     },
   });
 
